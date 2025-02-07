@@ -3,13 +3,13 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const axios = require('axios');
 const PORT = 4002;
+const postByIdWithComments = {};
 
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-const postByIdWithComments = {};
-
+///////////////////////////////////////////   helper funciton  /////////////////////////////////////
 const handleEvent = (type, data) => {
   switch (type) {
     case 'POST_CREATED':
@@ -34,6 +34,7 @@ const handleEvent = (type, data) => {
   }
   console.log('in handle event: ', postByIdWithComments);
 };
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
 app.get('/posts', (req, res, next) => {
   res.send(postByIdWithComments);
@@ -42,7 +43,10 @@ app.get('/posts', (req, res, next) => {
 app.post('/events', (req, res, next) => {
   const { type, data } = req.body;
   handleEvent(type, data);
-  console.log(req.body);
+  console.log(
+    'event received in query server at app.posts(/events):',
+    req.body
+  );
 
   res.send(postByIdWithComments);
 });
