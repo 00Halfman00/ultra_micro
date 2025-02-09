@@ -11,7 +11,7 @@ function PostCreate() {
     e.preventDefault();
     console.log('post being created in PostCreate: ', post);
     await axios
-      .post('http://posts-clusterip-srv:4000/posts', post)
+      .post('http://posts-srv:4000/posts', post)
       .catch((e) => console.error(e));
     setPosts({ title: '', content: '' });
   };

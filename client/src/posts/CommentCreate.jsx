@@ -7,10 +7,17 @@ function CommentCreate({ postId }) {
   const submitHandler = async (e) => {
     e.preventDefault();
     console.log('comment being created at CommentCreate: ', content);
-    await axios.post(`http://localhost:4001/posts/${postId}/comments`, {
-      content,
-    });
-    setContent('');
+    try {
+      await axios.post(
+        `http://comments-clusterip-srv:4001/posts/${postId}/comments`,
+        {
+          content,
+        }
+      );
+      setContent('');
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (

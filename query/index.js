@@ -21,7 +21,11 @@ const handleEvent = (type, data) => {
       };
       break;
     case 'COMMENT_CREATED':
-      postByIdWithComments[data.postId].comments.push(data);
+      postByIdWithComments[data.postId].comments.push({
+        id: data.id,
+        content: data.content,
+        status: data.status,
+      });
       break;
     case 'COMMENT_UPDATED':
       const comment = postByIdWithComments[data.postId].comments.find(
@@ -29,10 +33,10 @@ const handleEvent = (type, data) => {
       );
       comment.status = data.status;
       comment.content = data.content;
+      break;
     default:
       '';
   }
-  console.log('in handle event: ', postByIdWithComments);
 };
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -41,19 +45,19 @@ app.get('/posts', (req, res, next) => {
 });
 
 app.post('/events', (req, res, next) => {
-  const { type, data } = req.body;
-  handleEvent(type, data);
   console.log(
-    'event received in query server at app.posts(/events):',
+    'event received in query server at app.post(/events): ',
     req.body
   );
-
+  const { type, data } = req.body;
+  handleEvent(type, data);
   res.send(postByIdWithComments);
 });
 
 app.listen(PORT, async () => {
+  console.log(`query server listening on port: ${PORT}`);
   try {
-    const res = await axios.get('http://localhost:4005/events');
+    const res = await axios.get('http://event-bus-clusterip-srv:4005/events');
 
     for (let event of res.data) {
       console.log('Processing event:', event.type);
@@ -63,6 +67,4 @@ app.listen(PORT, async () => {
   } catch (error) {
     console.log(error.message);
   }
-
-  console.log(`query server listening on port: ${PORT}`);
 });

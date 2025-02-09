@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: event-bus
-          image: 00halfman00/event-bus
+          image: yourHandle/event-bus
 ---
 apiVersion: v1
 kind: Service

@@ -7,7 +7,7 @@ function PostList() {
   const [postsList, setPostList] = useState({});
   const fetchPost = async () => {
     try {
-      const { data } = await axios.get('http://localhost:4002/posts');
+      const { data } = await axios.get('http://query-clusterip-srv:4002/posts');
       console.log('received data: ', data);
       setPostList(data);
     } catch (e) {

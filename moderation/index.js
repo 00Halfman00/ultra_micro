@@ -6,29 +6,41 @@ const PORT = 4003;
 const app = express();
 app.use(bodyParser.json());
 
-app.post('/events', (req, res, next) => {
+app.post('/events', async (req, res, next) => {
   const { type, data } = req.body;
-  console.log('in moderation server: ', req.body);
-  const event = {};
-  switch (type) {
-    case 'COMMENT_CREATED':
-      (event.type = 'COMMENT_MODERATED'),
-        (event.data = {
-          ...data,
-          status: data.content.includes('foul language')
-            ? 'rejected'
-            : 'approved',
-        });
+  console.log(
+    'event received in moderation server at app.post(/events): ',
+    req.body
+  );
 
-      axios
-        .post('http://localhost:4005/events', event)
-        .catch((e) => console.error(e));
-      break;
-    default:
-      '';
+  try {
+    if (type === 'COMMENT_CREATED') {
+      const status = data.content.includes('foul language')
+        ? 'rejected'
+        : 'approved';
+
+      await axios.post('http://event-bus-clusterip-srv:4005/events', {
+        type: 'COMMENT_MODERATED',
+        data: {
+          id: data.id,
+          postId: data.postId,
+          content: data.content,
+          status,
+        },
+      });
+    }
+
+    res.send({ message: 'event received' });
+  } catch (e) {
+    console.error(e);
+    next(e);
   }
+});
 
-  res.send({ message: 'event received' });
+// Error handling middleware (should be defined AFTER your routes)
+app.use((err, req, res, next) => {
+  console.error('Global Error Handler:', err); // Log the error
+  res.status(500).send({ error: 'Something went wrong!' }); // Generic error response
 });
 
 app.listen(PORT, () =>
