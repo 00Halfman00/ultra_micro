@@ -18,7 +18,7 @@ app.get('/posts', (req, res, next) => {
   res.send(posts);
 });
 
-app.post('/posts', async (req, res, next) => {
+app.post('/posts/create', async (req, res, next) => {
   console.log(
     'creating a new post in posts server at app.post(/posts)',
     req.body

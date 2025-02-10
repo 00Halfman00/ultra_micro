@@ -51,6 +51,9 @@ app.post('/events', (req, res, next) => {
   );
   const { type, data } = req.body;
   handleEvent(type, data);
+  // to be more specific, the type should be checked for proper response
+  // for example, if type === "COMMENT_CREATED" || type === 'POST_CREATED',
+  // the response should be: res.status(201).send(postByIdWithComments)
   res.send(postByIdWithComments);
 });
 
