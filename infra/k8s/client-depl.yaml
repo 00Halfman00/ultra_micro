@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: client
-          image: 00halfman00/client
+          image: yourHandle/client
 ---
 apiVersion: v1
 kind: Service
